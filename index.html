@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Today Song</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        /* 오늘의 노래 섹션 */
+        .today-song {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .song-info {
+            margin-top: 15px;
+        }
+
+        /* 이전 노래 목록 */
+        .song-history {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .song-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .song-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .song-date {
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        .song-name {
+            font-weight: bold;
+        }
+
+        .song-author {
+            color: #555;
+        }
+
+        /* 유튜브 플레이어 컨테이너 */
+        .youtube-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 비율 */
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .youtube-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<h1>Today Song</h1>
+
+<!-- 오늘의 노래 섹션 -->
+<div class="today-song">
+    <div class="youtube-container">
+        <div id="youtube-player"></div>
+    </div>
+    <div class="song-info">
+        <div id="today-song-name" class="song-name"></div>
+        <div id="today-song-author" class="song-author"></div>
+        <div id="today-song-date" class="song-date"></div>
+    </div>
+</div>
+
+<!-- 이전 노래 목록 -->
+<div class="song-history">
+    <h2>이전 노래 목록</h2>
+    <div id="song-list"></div>
+</div>
+
+<!-- 유튜브 API -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script>
+    // YouTube API 로드
+    let tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    let firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    let player;
+    let songs = [];
+    let currentSongIndex = 0;
+
+    // YouTube 플레이어 초기화
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('youtube-player', {
+            height: '100%',
+            width: '100%',
+            videoId: '',
+            playerVars: {
+                'playsinline': 1,
+                'rel': 0
+            },
+            events: {
+                'onReady': onPlayerReady
+            }
+        });
+    }
+
+    // 플레이어 준비 완료 시 호출
+    function onPlayerReady(event) {
+        loadSongsData();
+    }
+
+    // CSV 파일에서 노래 데이터 로드
+    function loadSongsData() {
+        fetch('data/song.csv')
+            .then(response => response.text())
+            .then(data => {
+                // CSV 파싱
+                Papa.parse(data, {
+                    delimiter: '|', // 구분자를 | 로 설정
+                    header: true,
+                    complete: function(results) {
+                        // 데이터 저장 및 정렬
+                        songs = results.data
+                            .filter(song => song.date && song.name && song.author && song.youtubeLink)
+                            .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                        // 현재(가장 최근) 노래 표시
+                        if (songs.length > 0) {
+                            displayCurrentSong();
+                            displaySongList();
+                        } else {
+                            document.getElementById('today-song-name').textContent = '노래 데이터가 없습니다.';
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('데이터를 불러오는 중 오류가 발생했습니다:', error);
+                document.getElementById('today-song-name').textContent = '데이터를 불러오는 중 오류가 발생했습니다.';
+            });
+    }
+
+    // 현재 노래 표시
+    function displayCurrentSong() {
+        const currentSong = songs[currentSongIndex];
+
+        // 노래 정보 표시
+        document.getElementById('today-song-name').textContent = currentSong.name;
+        document.getElementById('today-song-author').textContent = currentSong.author;
+        document.getElementById('today-song-date').textContent = formatDate(currentSong.date);
+
+        // 유튜브 비디오 ID 추출 및 재생
+        const videoId = getYoutubeVideoId(currentSong.youtubeLink);
+        if (player && videoId) {
+            player.loadVideoById(videoId);
+        }
+    }
+
+    // 노래 목록 표시
+    function displaySongList() {
+        const songListElement = document.getElementById('song-list');
+        songListElement.innerHTML = '';
+
+        // 모든 노래 목록 표시 (현재 노래 포함)
+        songs.forEach((song, index) => {
+            const songItem = document.createElement('div');
+            songItem.className = 'song-item';
+            if (index === currentSongIndex) {
+                songItem.style.backgroundColor = '#f0f7ff';
+            }
+
+            songItem.innerHTML = `
+                    <div class="song-date">${formatDate(song.date)}</div>
+                    <div class="song-name">${song.name}</div>
+                    <div class="song-author">${song.author}</div>
+                `;
+
+            // 노래 클릭 시 재생
+            songItem.addEventListener('click', () => {
+                currentSongIndex = index;
+                displayCurrentSong();
+                displaySongList();
+            });
+
+            songListElement.appendChild(songItem);
+        });
+    }
+
+    // 유튜브 URL에서 비디오 ID 추출
+    function getYoutubeVideoId(url) {
+        if (!url) return null;
+
+        // 정규식으로 다양한 유튜브 URL 형식에서 ID 추출
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+
+        return (match && match[2].length === 11) ? match[2] : null;
+    }
+
+    // 날짜 형식 변환 (YYYY-MM-DD -> YYYY년 MM월 DD일)
+    function formatDate(dateString) {
+        if (!dateString) return '';
+
+        try {
+            const date = new Date(dateString);
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+
+            return `${year}년 ${month}월 ${day}일`;
+        } catch (e) {
+            return dateString;
+        }
+    }
+</script>
+</body>
+</html>
