@@ -9,6 +9,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // CSV 데이터 로드
     loadSongData(formattedDate);
+
+    // 헤더 제목에 클릭 이벤트 추가
+    const headerTitle = document.querySelector('header h1');
+    headerTitle.style.cursor = 'pointer'; // 클릭 가능함을 시각적으로 표시
+
+    headerTitle.addEventListener('click', () => {
+        // 페이지 리로드하여 오늘 날짜로 리다이렉트
+        window.location.reload();
+    });
 });
 
 /**
@@ -156,6 +165,12 @@ function displayPreviousSongs(songs) {
         const formattedDate = `${year}년 ${parseInt(month)}월 ${parseInt(day)}일`;
 
         const li = document.createElement('li');
+        // 데이터 속성 추가
+        li.dataset.name = song.name;
+        li.dataset.artist = song.author;
+        li.dataset.country = song.country;
+        li.dataset.videoId = videoId;
+
         li.innerHTML = `
             <div class="song-item">
                 <div class="song-name">${song.name}</div>
@@ -181,7 +196,18 @@ function addPlayButtonListeners() {
 
     playButtons.forEach(button => {
         button.addEventListener('click', function() {
-            const videoId = this.getAttribute('data-video-id');
+            const listItem = this.closest('li');
+
+            // 데이터 속성에서 노래 정보 가져오기
+            const songName = listItem.dataset.name;
+            const songArtist = listItem.dataset.artist;
+            const songCountry = listItem.dataset.country;
+            const videoId = listItem.dataset.videoId;
+
+            // 노래 정보 업데이트
+            document.getElementById('songTitle').textContent = songName;
+            document.getElementById('songArtist').textContent = `아티스트: ${songArtist}`;
+            document.getElementById('songCountry').textContent = `장르: ${songCountry}`;
 
             // 유튜브 플레이어 업데이트
             const playerDiv = document.getElementById('youtubePlayer');
