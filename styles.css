@@ -21,18 +21,19 @@ body {
 /* 헤더 스타일 */
 header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     padding: 20px 0;
     border-bottom: 1px solid #eee;
 }
 
 header h1 {
     font-size: 2.5rem;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     color: #2c3e50;
 }
 
 .today-date {
+    margin-top: -10px;
     font-size: 1.2rem;
     color: #7f8c8d;
 }
@@ -51,7 +52,7 @@ header h1 {
 
 .song-info {
     text-align: center;
-    margin-bottom: 20px;
+    margin-top: 20px; /* 유튜브 플레이어 아래에 위치하도록 마진 추가 */
 }
 
 .song-info h2 {
@@ -88,6 +89,7 @@ header h1 {
     border-radius: 10px;
     padding: 30px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 50px; /* 메인 노래와 이전 노래 리스트 사이 간격 증가 */
 }
 
 .previous-songs h3 {
@@ -161,18 +163,16 @@ footer {
 /* 반응형 디자인 */
 @media (min-width: 768px) {
     .today-song {
-        flex-direction: row;
-    }
-
-    .song-info {
-        flex: 1;
-        text-align: left;
-        margin-bottom: 0;
+        flex-direction: column; /* 유튜브 플레이어와 노래 정보를 세로로 배열 */
     }
 
     .youtube-player {
-        flex: 2;
-        padding-bottom: 30%;
+        width: 100%;
+    }
+
+    .song-info {
+        width: 100%;
+        text-align: center;
     }
 }
 

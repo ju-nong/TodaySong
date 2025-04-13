@@ -61,25 +61,46 @@ function loadSongData(today) {
  * @param {string} today - 오늘 날짜 (YYYY-MM-DD 형식)
  */
 function processData(data, today) {
+    // 오늘 날짜를 Date 객체로 변환
+    const todayDate = new Date(today);
+
     // 오늘의 노래 필터링
     const todaySong = data.find(song => song.date === today);
 
-    // 이전 노래 필터링 (날짜 역순으로 정렬)
+    // 이전 노래 필터링 (오늘 날짜 이전만, 날짜 역순으로 정렬)
     const previousSongs = data
-        .filter(song => song.date !== today)
+        .filter(song => {
+            const songDate = new Date(song.date);
+            // 오늘 날짜와 다르고, 오늘 날짜보다 이전인 경우만 포함
+            return song.date !== today && songDate <= todayDate;
+        })
         .sort((a, b) => new Date(b.date) - new Date(a.date));
 
     // 오늘의 노래 표시
     if (todaySong) {
         displayTodaySong(todaySong);
     } else {
-        // 오늘 노래가 없는 경우, 가장 최신 노래 표시
-        const latestSong = data.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-        displayTodaySong(latestSong);
+        // 오늘 노래가 없는 경우, 가장 최신 노래 표시 (오늘 이전 날짜만)
+        const pastSongs = data.filter(song => {
+            const songDate = new Date(song.date);
+            return songDate <= todayDate;
+        });
 
-        // 이전 노래 목록에서 최신 노래 제외
-        const remainingSongs = previousSongs.filter(song => song.date !== latestSong.date);
-        displayPreviousSongs(remainingSongs);
+        if (pastSongs.length > 0) {
+            const latestSong = pastSongs.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+            displayTodaySong(latestSong);
+
+            // 이전 노래 목록에서 최신 노래 제외
+            const remainingSongs = previousSongs.filter(song => song.date !== latestSong.date);
+            displayPreviousSongs(remainingSongs);
+        } else {
+            // 과거 노래가 없는 경우 처리
+            document.getElementById('songTitle').textContent = "노래가 없습니다";
+            document.getElementById('songArtist').textContent = "";
+            document.getElementById('songCountry').textContent = "";
+            document.getElementById('youtubePlayer').innerHTML = "";
+            displayPreviousSongs([]);
+        }
     }
 
     // 이전 노래 목록 표시
