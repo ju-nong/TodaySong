@@ -1,3 +1,8 @@
+// 페이징 관련 설정
+const SONGS_PER_PAGE = 5; // 페이지당 노래 수
+let currentPage = 1;
+let allPreviousSongs = []; // 모든 이전 노래를 저장할 배열
+
 // 현재 날짜 표시
 document.addEventListener('DOMContentLoaded', () => {
     // 오늘 날짜 가져오기
@@ -77,7 +82,7 @@ function processData(data, today) {
     const todaySong = data.find(song => song.date === today);
 
     // 이전 노래 필터링 (오늘 날짜 이전만, 날짜 역순으로 정렬)
-    const previousSongs = data
+    allPreviousSongs = data
         .filter(song => {
             const songDate = new Date(song.date);
             // 오늘 날짜와 다르고, 오늘 날짜보다 이전인 경우만 포함
@@ -100,20 +105,75 @@ function processData(data, today) {
             displayTodaySong(latestSong);
 
             // 이전 노래 목록에서 최신 노래 제외
-            const remainingSongs = previousSongs.filter(song => song.date !== latestSong.date);
-            displayPreviousSongs(remainingSongs);
+            allPreviousSongs = allPreviousSongs.filter(song => song.date !== latestSong.date);
         } else {
             // 과거 노래가 없는 경우 처리
             document.getElementById('songTitle').textContent = "노래가 없습니다";
             document.getElementById('songArtist').textContent = "";
             document.getElementById('songCountry').textContent = "";
             document.getElementById('youtubePlayer').innerHTML = "";
-            displayPreviousSongs([]);
         }
     }
 
-    // 이전 노래 목록 표시
-    displayPreviousSongs(previousSongs);
+    // 페이지네이션 생성 및 이전 노래 표시
+    updatePagination();
+    displayPreviousSongs();
+}
+
+/**
+ * 페이지네이션 업데이트
+ */
+function updatePagination() {
+    const totalPages = Math.ceil(allPreviousSongs.length / SONGS_PER_PAGE);
+    const paginationContainer = document.getElementById('pagination');
+    paginationContainer.innerHTML = '';
+
+    // 페이지가 1페이지 이하면 페이지네이션 숨기기
+    if (totalPages <= 1) {
+        paginationContainer.style.display = 'none';
+        return;
+    } else {
+        paginationContainer.style.display = 'flex';
+    }
+
+    // 이전 버튼
+    const prevButton = document.createElement('button');
+    prevButton.innerHTML = '&laquo;';
+    prevButton.disabled = currentPage === 1;
+    prevButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            updatePagination();
+            displayPreviousSongs();
+        }
+    });
+    paginationContainer.appendChild(prevButton);
+
+    // 페이지 버튼
+    for (let i = 1; i <= totalPages; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.textContent = i;
+        pageButton.classList.toggle('active', i === currentPage);
+        pageButton.addEventListener('click', () => {
+            currentPage = i;
+            updatePagination();
+            displayPreviousSongs();
+        });
+        paginationContainer.appendChild(pageButton);
+    }
+
+    // 다음 버튼
+    const nextButton = document.createElement('button');
+    nextButton.innerHTML = '&raquo;';
+    nextButton.disabled = currentPage === totalPages;
+    nextButton.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            updatePagination();
+            displayPreviousSongs();
+        }
+    });
+    paginationContainer.appendChild(nextButton);
 }
 
 /**
@@ -144,20 +204,24 @@ function displayTodaySong(song) {
 }
 
 /**
- * 이전 노래 목록 표시
- * @param {Array} songs - 이전 노래 데이터 배열
+ * 이전 노래 목록 표시 (페이징 적용)
  */
-function displayPreviousSongs(songs) {
+function displayPreviousSongs() {
     const previousSongsList = document.getElementById('previousSongsList');
     previousSongsList.innerHTML = ''; // 목록 초기화
 
-    if (songs.length === 0) {
+    if (allPreviousSongs.length === 0) {
         previousSongsList.innerHTML = '<li>이전 노래가 없습니다.</li>';
         return;
     }
 
+    // 현재 페이지에 표시할 노래 계산
+    const startIndex = (currentPage - 1) * SONGS_PER_PAGE;
+    const endIndex = Math.min(startIndex + SONGS_PER_PAGE, allPreviousSongs.length);
+    const currentPageSongs = allPreviousSongs.slice(startIndex, endIndex);
+
     // 각 노래에 대한 목록 항목 생성
-    songs.forEach(song => {
+    currentPageSongs.forEach(song => {
         const videoId = extractVideoId(song.youtubeLink);
 
         // 날짜 포맷팅 (YYYY-MM-DD -> YYYY년 MM월 DD일)
