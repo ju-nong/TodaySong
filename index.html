@@ -1,43 +1,47 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>오늘의 노래</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-<div class="container">
-    <header>
-        <h1>오늘의 노래</h1>
-        <p class="today-date" id="todayDate"></p>
-    </header>
+    <div class="container">
+        <header>
+            <h1>오늘의 노래</h1>
+            <p class="today-date" id="todayDate"></p>
+        </header>
 
-    <main>
-        <section class="today-song">
-            <!-- 유튜브 플레이어를 위로 이동 -->
-            <div class="youtube-player" id="youtubePlayer"></div>
-            <!-- 노래 정보를 아래로 이동 -->
-            <div class="song-info">
-                <h2 id="songTitle"></h2>
-                <p id="songArtist"></p>
-                <p id="songCountry"></p>
-            </div>
-        </section>
+        <main>
+            <section class="today-song">
+                <!-- 유튜브 플레이어를 위로 이동 -->
+                <div class="youtube-player" id="youtubePlayer"></div>
+                <!-- 노래 정보를 아래로 이동 -->
+                <div class="song-info">
+                    <h2 id="songTitle"></h2>
+                    <p id="songArtist"></p>
+                    <p id="songCountry"></p>
+                </div>
+            </section>
 
-        <section class="previous-songs">
-            <h3>이전 노래</h3>
-            <div class="pagination" id="pagination"></div>
-            <ul id="previousSongsList"></ul>
-        </section>
-    </main>
+            <section class="previous-songs">
+                <h3>이전 노래</h3>
+                <div class="pagination" id="pagination"></div>
+                <ul id="previousSongsList"></ul>
+            </section>
+        </main>
 
-    <footer>
-        <p>© 2025 오늘의 노래</p>
-    </footer>
-</div>
+        <footer>
+            <p>© 2025 오늘의 노래</p>
+            <a href="https://discord.gg/8J5CQtYSxf">노래 추천 디스코드</a>
+        </footer>
+    </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-<script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>
