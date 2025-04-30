@@ -6,10 +6,67 @@
 }
 
 body {
+    --bg-color: #f5f5f5;
+    --text-color: #333;
+    --subtext-color: #7f8c8d;
+    --card-bg: #ffffff;
+    --card-border: #eee;
+    --shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    --accent-color: #3498db;
+    --accent-hover: #2980b9;
+    --divider: #eee;
+    --pagination-bg: #f1f1f1;
+    --pagination-hover: #ddd;
+    --pagination-border: #ddd;
+    --pagination-disabled: #ccc;
+    --link-color:#1a0dab;
+
     font-family: 'Noto Sans KR', sans-serif;
-    background-color: #f5f5f5;
-    color: #333;
+    background-color:var(--bg-color);
+    color:var(--text-color);
     line-height: 1.6;
+}
+
+body.dark {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --subtext-color: #a0a0a0;
+    --card-bg: #1e1e1e;
+    --card-border: #333;
+    --shadow: none;
+    --accent-color: #3498db;
+    --accent-hover: #1d6fa5;
+    --divider: #333;
+    --pagination-bg: #2c2c2c;
+    --pagination-hover: #3a3a3a;
+    --pagination-border: #444;
+    --pagination-disabled: #555;
+    --link-color:#7eaaff;
+}
+
+/* 테마 변경 버튼 */
+#theme-button{
+    all: unset;
+    position: absolute;
+    top:1.25rem;
+    right:1.25rem;
+    cursor: pointer;
+}
+
+body:not(.dark) #theme-button > svg:first-child{
+    display: none;
+}
+
+body:not(.dark) #theme-button > svg:last-child{
+    display: block;
+}
+
+body.dark #theme-button > svg:first-child{
+    display: block;
+}
+
+body.dark #theme-button > svg:last-child{
+    display: none;
 }
 
 .container {
@@ -23,7 +80,7 @@ header {
     text-align: center;
     margin-bottom: 10px;
     padding: 20px 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--divider);
 }
 
 header h1 {
@@ -32,13 +89,13 @@ header h1 {
 }
 
 header h1:hover {
-    color: #3498db;
+    color: var(--accent-color);
 }
 
 .today-date {
     margin-top: -10px;
     font-size: 1.2rem;
-    color: #7f8c8d;
+    color: var(--subtext-color);
 }
 
 /* 오늘의 노래 섹션 */
@@ -46,10 +103,10 @@ header h1:hover {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background-color: #fff;
+    background-color: var(--card-bg);
     border-radius: 10px;
     padding: 30px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
     margin-bottom: 40px;
 }
 
@@ -61,12 +118,13 @@ header h1:hover {
 .song-info h2 {
     font-size: 2rem;
     margin-bottom: 10px;
-    color: #2c3e50;
+    color:var(--text-color);
+
 }
 
 .song-info p {
     font-size: 1.2rem;
-    color: #7f8c8d;
+    color: var(--subtext-color);
     margin-bottom: 5px;
 }
 
@@ -88,7 +146,7 @@ header h1:hover {
 
 /* 이전 노래 섹션 */
 .previous-songs {
-    background-color: #fff;
+    background-color: var(--card-bg);
     border-radius: 10px;
     padding: 30px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -98,8 +156,8 @@ header h1:hover {
 .previous-songs h3 {
     font-size: 1.8rem;
     margin-bottom: 20px;
-    color: #2c3e50;
-    border-bottom: 1px solid #eee;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--card-border);
     padding-bottom: 10px;
     display: flex;
     justify-content: space-between;
@@ -113,9 +171,9 @@ header h1:hover {
 }
 
 .pagination button {
-    background-color: #f1f1f1;
-    border: 1px solid #ddd;
-    color: #333;
+    background-color: var(--pagination-bg);
+    border: 1px solid var(--pagination-border);
+    color: var(--text-color);
     padding: 5px 10px;
     cursor: pointer;
     border-radius: 3px;
@@ -123,17 +181,17 @@ header h1:hover {
 }
 
 .pagination button.active {
-    background-color: #3498db;
+    background-color: var(--accent-color);
     color: white;
-    border-color: #3498db;
+    border-color: var(--accent-color);
 }
 
 .pagination button:hover:not(.active) {
-    background-color: #ddd;
+    background-color: var(--pagination-hover);
 }
 
 .pagination button:disabled {
-    background-color: #f1f1f1;
+    color: var(--pagination-disabled);
     color: #ccc;
     cursor: not-allowed;
 }
@@ -167,18 +225,18 @@ header h1:hover {
 }
 
 .song-artist, .song-country {
-    color: #7f8c8d;
+    color: var(--subtext-color);
     font-size: 0.9rem;
 }
 
 .song-date {
-    color: #95a5a6;
+    color: var(--subtext-color);
     font-size: 0.9rem;
     text-align: center;
 }
 
 .play-button {
-    background-color: #3498db;
+    background-color: var(--accent-color);
     color: white;
     border: none;
     border-radius: 5px;
@@ -190,7 +248,7 @@ header h1:hover {
 }
 
 .play-button:hover {
-    background-color: #2980b9;
+    background-color: var(--accent-hover);
 }
 
 /* 푸터 스타일 */
@@ -198,7 +256,11 @@ footer {
     text-align: center;
     margin-top: 40px;
     padding: 20px 0;
-    color: #7f8c8d;
+    color: var(--subtext-color);
+}
+
+footer a{
+    color:var(--link-color)
 }
 
 /* 반응형 디자인 */

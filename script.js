@@ -3,6 +3,9 @@ const SONGS_PER_PAGE = 5; // 페이지당 노래 수
 let currentPage = 1;
 let allPreviousSongs = []; // 모든 이전 노래를 저장할 배열
 
+// 다크 테마 값
+const darkClass = "dark";
+
 // 현재 날짜 표시
 document.addEventListener('DOMContentLoaded', () => {
     // 오늘 날짜 가져오기
@@ -23,6 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // 페이지 리로드하여 오늘 날짜로 리다이렉트
         window.location.reload();
     });
+
+    // 테마 확인
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === darkClass) {
+      document.body.classList.add(darkClass);
+    }
 });
 
 /**
@@ -329,3 +338,15 @@ function extractVideoId(url) {
     console.error('유튜브 비디오 ID를 추출할 수 없습니다:', url);
     return '';
 }
+
+/**
+ * 테마 변경
+ */
+const $themeButton = document.getElementById("theme-button");
+$themeButton.addEventListener("click", function(){
+    document.body.classList.toggle(darkClass);
+
+    const isDark = document.body.classList.contains(darkClass);
+    localStorage.setItem('theme', isDark ? darkClass : 'light');
+
+})
