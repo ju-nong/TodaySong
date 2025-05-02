@@ -18,15 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // CSV 데이터 로드
     loadSongData(formattedDate);
 
-    // 헤더 제목에 클릭 이벤트 추가
-    const headerTitle = document.querySelector('header h1');
-    headerTitle.style.cursor = 'pointer'; // 클릭 가능함을 시각적으로 표시
-
-    headerTitle.addEventListener('click', () => {
-        // 페이지 리로드하여 오늘 날짜로 리다이렉트
-        window.location.reload();
-    });
-
     // 테마 확인
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === darkClass) {
