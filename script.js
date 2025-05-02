@@ -39,6 +39,35 @@ function formatDate(date) {
 }
 
 /**
+ * CSV 파일 파싱
+ * @param {string} csvData - CSV 파일 데이터 ("|"와 "\n"으로 구분)
+ * @returns {string[]} 파싱된 CSV 파일 데이터
+ */
+function parsingCsvDat(csvData){
+    const result = [];
+
+    const splitCsvData = csvData.split("\n");
+    const splitCsvDataSize = splitCsvData.length;
+
+    const header = splitCsvData[0].split("|");
+    header.pop();
+    const headerSize = header.length;
+    
+    for(let i = 1; i < splitCsvDataSize; i++){
+        const currentCsvRowData = splitCsvData[i].split("|");
+        const tempItem = {};
+
+        for(let j = 0; j < headerSize; j++){
+            tempItem[header[j]] = currentCsvRowData[j];
+        }
+
+        result.push(tempItem);
+    }
+
+    return result;
+}
+
+/**
  * CSV 파일에서 노래 데이터 로드
  * @param {string} today - 오늘 날짜 (YYYY-MM-DD 형식)
  */
@@ -50,19 +79,7 @@ function loadSongData(today) {
     fetch(csvFilePath)
         .then(response => response.text())
         .then(csvData => {
-            // CSV 데이터 파싱
-            Papa.parse(csvData, {
-                header: true,
-                delimiter: '|', // 구분자가 | 임을 명시
-                skipEmptyLines: true,
-                complete: function(results) {
-                    // 파싱된 데이터 처리
-                    processData(results.data, today);
-                },
-                error: function(error) {
-                    console.error('CSV 파싱 오류:', error);
-                }
-            });
+            processData(parsingCsvDat(csvData), today);
         })
         .catch(error => {
             console.error('CSV 파일 로드 오류:', error);
