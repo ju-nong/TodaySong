@@ -19,11 +19,11 @@ body {
     --pagination-hover: #ddd;
     --pagination-border: #ddd;
     --pagination-disabled: #ccc;
-    --link-color:#1a0dab;
+    --link-color: #1a0dab;
 
-    font-family: 'Noto Sans KR', sans-serif;
-    background-color:var(--bg-color);
-    color:var(--text-color);
+    font-family: "Noto Sans KR", sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     line-height: 1.6;
 }
 
@@ -41,31 +41,31 @@ body.dark {
     --pagination-hover: #3a3a3a;
     --pagination-border: #444;
     --pagination-disabled: #555;
-    --link-color:#7eaaff;
+    --link-color: #7eaaff;
 }
 
 /* 테마 변경 버튼 */
-#theme-button{
+#theme-button {
     all: unset;
     position: absolute;
-    top:1.25rem;
-    right:1.25rem;
+    top: 1.25rem;
+    right: 1.25rem;
     cursor: pointer;
 }
 
-body:not(.dark) #theme-button > svg:first-child{
+body:not(.dark) #theme-button > svg:first-child {
     display: none;
 }
 
-body:not(.dark) #theme-button > svg:last-child{
+body:not(.dark) #theme-button > svg:last-child {
     display: block;
 }
 
-body.dark #theme-button > svg:first-child{
+body.dark #theme-button > svg:first-child {
     display: block;
 }
 
-body.dark #theme-button > svg:last-child{
+body.dark #theme-button > svg:last-child {
     display: none;
 }
 
@@ -118,8 +118,7 @@ header h1:hover {
 .song-info h2 {
     font-size: 2rem;
     margin-bottom: 10px;
-    color:var(--text-color);
-
+    color: var(--text-color);
 }
 
 .song-info p {
@@ -164,13 +163,18 @@ header h1:hover {
     align-items: center;
 }
 
-.pagination {
+.pagination-container {
     display: flex;
     gap: 10px;
     margin-bottom: 15px;
 }
 
-.pagination button {
+.pagination-container > div {
+    display: flex;
+    gap: 10px;
+}
+
+.pagination-container button {
     background-color: var(--pagination-bg);
     border: 1px solid var(--pagination-border);
     color: var(--text-color);
@@ -180,17 +184,17 @@ header h1:hover {
     font-size: 0.9rem;
 }
 
-.pagination button.active {
+.pagination-container button.active {
     background-color: var(--accent-color);
     color: white;
     border-color: var(--accent-color);
 }
 
-.pagination button:hover:not(.active) {
+.pagination-container button:hover:not(.active) {
     background-color: var(--pagination-hover);
 }
 
-.pagination button:disabled {
+.pagination-container button:disabled {
     color: var(--pagination-disabled);
     color: #ccc;
     cursor: not-allowed;
@@ -224,7 +228,8 @@ header h1:hover {
     font-size: 1.1rem;
 }
 
-.song-artist, .song-country {
+.song-artist,
+.song-genre {
     color: var(--subtext-color);
     font-size: 0.9rem;
 }
@@ -259,8 +264,8 @@ footer {
     color: var(--subtext-color);
 }
 
-footer a{
-    color:var(--link-color)
+footer a {
+    color: var(--link-color);
 }
 
 /* 반응형 디자인 */
