@@ -49,8 +49,6 @@ export function setPlayer(songItem, index) {
  * @param {*} event
  */
 function handlePlayerStateChange(event) {
-    console.log(event);
-
     // 재생 완료
     if (event.data === 0) {
         const nextPlayInex =
