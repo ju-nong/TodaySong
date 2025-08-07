@@ -165,6 +165,8 @@ header h1:hover {
 
 .pagination-container {
     display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 10px;
     margin-bottom: 15px;
 }
@@ -182,6 +184,10 @@ header h1:hover {
     cursor: pointer;
     border-radius: 3px;
     font-size: 0.9rem;
+}
+
+.pagination button {
+    width: 45px;
 }
 
 .pagination-container button.active {
