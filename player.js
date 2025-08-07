@@ -51,11 +51,11 @@ export function setPlayer(songItem, index) {
 function handlePlayerStateChange(event) {
     // 재생 완료
     if (event.data === 0) {
-        const nextPlayInex =
+        const nextPlayIndex =
             song.length - 1 === playingIndex ? 0 : playingIndex + 1;
 
-        setPlayer(song[nextPlayInex], nextPlayInex);
-        handleAutoPlay(nextPlayInex);
+        setPlayer(song[nextPlayIndex], nextPlayIndex);
+        handleAutoPlay(nextPlayIndex);
     }
 }
 

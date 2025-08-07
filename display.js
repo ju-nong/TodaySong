@@ -19,11 +19,11 @@ import { setPlayer } from "./player.js";
 
 const ACTIVE_PAGE_BUTTON_CLASS = "active";
 
-let totalPage = 0;
-let currentPage = -1;
-let currentIndex = -1;
+let totalPage = 1;
+let currentPage = 1;
+let currentIndex = 1;
 
-let tempPage = -1;
+let tempPage = 1;
 
 // song info elements
 const $title = document.getElementById(SONG_TITLE_ELEMENT_ID);
@@ -40,19 +40,19 @@ const $paginationButtonFirst = document.getElementById(
     PAGINATION_BUTTON_FIRST_ELEMENT_ID,
 );
 $paginationButtonFirst.addEventListener("click", () => {
-    handleClickPageButton(0);
+    handleClickPageButton(1);
 });
 const $paginationButtonLast = document.getElementById(
     PAGINATION_BUTTON_LAST_ELEMENT_ID,
 );
 $paginationButtonLast.addEventListener("click", () => {
-    handleClickPageButton(totalPage - 1);
+    handleClickPageButton(totalPage);
 });
 const $paginationButtonPrev = document.getElementById(
     PAGINATION_BUTTON_PREV_ELEMENT_ID,
 );
 $paginationButtonPrev.addEventListener("click", () => {
-    if (tempPage < 1) {
+    if (tempPage < 2) {
         return;
     }
 
@@ -62,7 +62,7 @@ const $paginationButtonNext = document.getElementById(
     PAGINATION_BUTTON_NEXT_ELEMENT_ID,
 );
 $paginationButtonNext.addEventListener("click", () => {
-    if (tempPage === totalPage - 1) {
+    if (tempPage === totalPage) {
         return;
     }
 
@@ -77,7 +77,7 @@ const $songList = document.getElementById(SONG_LIST_ELEMENT_ID);
  * @param {number} page
  * @param {number} index
  */
-export function initPagination(page = 0, index = 0) {
+export function initPagination(page = 1, index = 1) {
     currentPage = page;
     currentIndex = index;
 
@@ -87,19 +87,22 @@ export function initPagination(page = 0, index = 0) {
 
     if (totalPage < 1) {
         $paginationContainer.style.display = "none";
+        totalPage = 1;
         return;
     }
 
-    // 페이지 버튼
-    for (let i = 0; i < totalPage; i++) {
-        const $pageButton = document.createElement("button");
-        $pageButton.textContent = i + 1;
-        $pageButton.classList.toggle(ACTIVE_PAGE_BUTTON_CLASS, i === page);
+    displayPageButton(page);
 
-        $pageButton.addEventListener("click", () => handleClickPageButton(i));
+    // // 페이지 버튼
+    // for (let i = 1; i < totalPage + 1; i++) {
+    //     const $pageButton = document.createElement("button");
+    //     $pageButton.textContent = i;
+    //     $pageButton.classList.toggle(ACTIVE_PAGE_BUTTON_CLASS, i === page);
 
-        $pagination.appendChild($pageButton);
-    }
+    //     $pageButton.addEventListener("click", () => handleClickPageButton(i));
+
+    //     $pagination.appendChild($pageButton);
+    // }
 
     displaySongList(page, index);
 }
@@ -110,11 +113,12 @@ export function initPagination(page = 0, index = 0) {
  * @param {boolean} action	// 사용자가 직접 클릭한 것인지 여부
  */
 function handleClickPageButton(page, action = true) {
-    for (let i = 0; i < $pagination.childElementCount; i++) {
-        $pagination.children[i].classList.remove(ACTIVE_PAGE_BUTTON_CLASS);
-    }
+    // for (let i = 0; i < $pagination.childElementCount; i++) {
+    //     $pagination.children[i].classList.remove(ACTIVE_PAGE_BUTTON_CLASS);
+    // }
 
-    $pagination.children[page].classList.add(ACTIVE_PAGE_BUTTON_CLASS);
+    // $pagination.children[page - 1].classList.add(ACTIVE_PAGE_BUTTON_CLASS);
+    displayPageButton(page);
 
     if (action) {
         tempPage = page;
@@ -123,12 +127,60 @@ function handleClickPageButton(page, action = true) {
 }
 
 /**
+ * 페이지 버튼 표시
+ * @param {number} page
+ */
+function displayPageButton(page) {
+    $pagination.innerHTML = "";
+
+    if (totalPage < 11) {
+        for (let i = 1; i < totalPage + 1; i++) {
+            const $pageButton = document.createElement("button");
+            $pageButton.textContent = i;
+            $pageButton.classList.toggle(ACTIVE_PAGE_BUTTON_CLASS, i === page);
+
+            $pageButton.addEventListener("click", () =>
+                handleClickPageButton(i),
+            );
+
+            $pagination.appendChild($pageButton);
+        }
+        return;
+    }
+
+    let startPoint = page - 5;
+    let endPoint = page + 4;
+    if (startPoint < 1) {
+        // startPoint가 1미만일 경우
+
+        endPoint = endPoint + Math.abs(1 - startPoint);
+        startPoint = 1;
+    }
+    if (endPoint > totalPage) {
+        // endPoint가 total 초과일 경우
+
+        startPoint = startPoint - Math.abs(totalPage - endPoint);
+        endPoint = totalPage;
+    }
+
+    for (let i = startPoint; i < endPoint + 1; i++) {
+        const $pageButton = document.createElement("button");
+        $pageButton.textContent = i;
+        $pageButton.classList.toggle(ACTIVE_PAGE_BUTTON_CLASS, i === page);
+
+        $pageButton.addEventListener("click", () => handleClickPageButton(i));
+
+        $pagination.appendChild($pageButton);
+    }
+}
+
+/**
  * 페이지에 해당하는 노래 목록 표시
  * @param {number} page
  * @param {number} index
  */
-async function displaySongList(page = 0, index = 0) {
-    const splitSongList = song.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+async function displaySongList(page = 1, index = 1) {
+    const splitSongList = song.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
     if (splitSongList.length < 1) {
         $songList.innerHTML = "<li>이전 노래가 없습니다.</li>";
@@ -156,14 +208,14 @@ async function displaySongList(page = 0, index = 0) {
             <div class="song-date">${formattedDate}</div>
         `;
 
-        if (currentPage === page && currentIndex === i) {
+        if (currentPage === page && currentIndex === i + 1) {
             $li.classList.add("current");
         }
 
         const $playButton = document.createElement("button");
         $playButton.classList.add("play-button");
 
-        const isPlayingSong = currentPage === page && currentIndex === i;
+        const isPlayingSong = currentPage === page && currentIndex === i + 1;
 
         $playButton.textContent = isPlayingSong ? "재생 중" : "재생";
         $playButton.addEventListener("click", () => {
@@ -172,10 +224,10 @@ async function displaySongList(page = 0, index = 0) {
                 return;
             }
 
-            replaceURL(page, i);
+            replaceURL(page, i + 1);
 
-            setPlayer(splitSongList[i], page * PAGE_SIZE + i);
-            displaySongList(page, i);
+            setPlayer(splitSongList[i], (page - 1) * PAGE_SIZE + i);
+            displaySongList(page, i + 1);
         });
         $li.appendChild($playButton);
 
@@ -237,7 +289,7 @@ function replaceURL(page, index) {
  * @param {number} index
  */
 export function handleAutoPlay(index) {
-    const playingPage = Math.floor(index / PAGE_SIZE);
+    const playingPage = Math.floor(index / PAGE_SIZE) + 1;
 
     // 페이지가 변경 됐을 시
     if (currentPage !== playingPage) {
@@ -246,7 +298,7 @@ export function handleAutoPlay(index) {
         handleClickPageButton(playingPage, false);
     }
 
-    const playingIndex = index - playingPage * PAGE_SIZE;
+    const playingIndex = index - (playingPage - 1) * PAGE_SIZE + 1;
     currentIndex = playingIndex;
 
     displaySongList(playingPage, playingIndex);

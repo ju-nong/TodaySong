@@ -32,7 +32,7 @@ function init() {
         setPlayer(song[0], 0);
         initPagination();
     } else {
-        const playingIndex = page * PAGE_SIZE + index;
+        const playingIndex = (page - 1) * PAGE_SIZE + (index - 1);
         setPlayer(song[playingIndex], playingIndex);
         initPagination(page, index);
     }
